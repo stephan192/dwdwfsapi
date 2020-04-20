@@ -69,7 +69,7 @@ Last update: 2020-04-18 17:57:29.274000+00:00
 - **`__init__(identifier)`**  
   Create a new weather warnings API class instance  
   
-  The `identifier` can either be a so called `warncell id` (int) or a `warncell name` (str). It is heavly advised to use `warncell id` because `warncell name` is not unique in some cases.  
+  The `identifier` can either be a so called `warncell id` (int) or a `warncell name` (str). It is heavily advised to use `warncell id` because `warncell name` is not unique in some cases.  
   A list auf valid warncell ids and names can be found [here](https://www.dwd.de/DE/leistungen/opendata/help/warnungen/cap_warncellids_csv.html).  
   Some of the warncells are outdated but still listed. If init fails search the list for a similar sounding warncell.  
   Method `update()` is automatically called at the end of a successfull init.  

@@ -16,6 +16,7 @@ def convert_warning_data(data_in):
     """
 
     # pylint: disable=too-many-branches
+    # pylint: disable=too-many-statements
 
     weather_severity_mapping = {
         "minor": 1,
@@ -38,26 +39,26 @@ def convert_warning_data(data_in):
         "instruction": None,
         "level": 0,
         "parameters": None,
-        "color": None,
+        "color": "#000000",
     }
 
     # Convert data
     if "onset" in data_in:
         try:
             data_out["start_time"] = ciso8601.parse_datetime(data_in["onset"])
-        except: # pylint: disable=bare-except
+        except:  # pylint: disable=bare-except
             data_out["start_time"] = None
     if "expires" in data_in:
         try:
             data_out["end_time"] = ciso8601.parse_datetime(data_in["expires"])
-        except: # pylint: disable=bare-except
+        except:  # pylint: disable=bare-except
             data_out["end_time"] = None
     if "event" in data_in:
         data_out["event"] = data_in["event"]
     if "ec_ii" in data_in:
         try:
             data_out["event_code"] = int(data_in["ec_ii"])
-        except: # pylint: disable=bare-except
+        except:  # pylint: disable=bare-except
             data_out["event_code"] = 0
     if "headline" in data_in:
         data_out["headline"] = data_in["headline"]
@@ -66,23 +67,32 @@ def convert_warning_data(data_in):
     if "instruction" in data_in:
         data_out["instruction"] = data_in["instruction"]
     if "severity" in data_in:
-        if data_in["severity"].lower() in weather_severity_mapping:
-            data_out["level"] = weather_severity_mapping[
-                data_in["severity"].lower()
-            ]
+        try:
+            if data_in["severity"].lower() in weather_severity_mapping:
+                data_out["level"] = weather_severity_mapping[
+                    data_in["severity"].lower()
+                ]
+        except:  # pylint: disable=bare-except
+            data_out["level"] = 0
     if "parametername" in data_in and "parametervalue" in data_in:
         # Depending on the query the keys and values are either seperated by , or ;
-        if "," in data_in["parametername"]:
-            keys = data_in["parametername"].split(",")
-            values = data_in["parametervalue"].split(",")
-        else:
-            keys = data_in["parametername"].split(";")
-            values = data_in["parametervalue"].split(";")
-        data_out["parameters"] = dict(zip(keys, values))
+        try:
+            if "," in data_in["parametername"]:
+                keys = data_in["parametername"].split(",")
+                values = data_in["parametervalue"].split(",")
+            else:
+                keys = data_in["parametername"].split(";")
+                values = data_in["parametervalue"].split(";")
+            data_out["parameters"] = dict(zip(keys, values))
+        except:  # pylint: disable=bare-except
+            data_out["parameters"] = None
     if "ec_area_color" in data_in:
-        colors = data_in["ec_area_color"].split(" ")
-        data_out["color"] = f"#{int(colors[0]):02x}{int(colors[1]):02x}"
-        data_out["color"] += f"{int(colors[2]):02x}"
+        try:
+            colors = data_in["ec_area_color"].split(" ")
+            data_out["color"] = f"#{int(colors[0]):02x}{int(colors[1]):02x}"
+            data_out["color"] += f"{int(colors[2]):02x}"
+        except:  # pylint: disable=bare-except
+            data_out["color"] = "#000000"
 
     return data_out
 
@@ -274,7 +284,7 @@ class DwdWeatherWarningsAPI:
                     self.last_update = ciso8601.parse_datetime(
                         json_obj["timeStamp"]
                     )
-                except: # pylint: disable=bare-except
+                except:  # pylint: disable=bare-except
                     self.last_update = datetime.datetime.now(
                         datetime.timezone.utc
                     )
@@ -315,7 +325,7 @@ class DwdWeatherWarningsAPI:
             self.expected_warnings = expected_warnings
             self.data_valid = True
 
-        except: # pylint: disable=bare-except
+        except:  # pylint: disable=bare-except
             self.data_valid = False
             self.last_update = None
             self.current_warning_level = None
