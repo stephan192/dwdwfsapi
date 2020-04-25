@@ -1,7 +1,5 @@
 # -*- coding: utf-8 -*-
 
-"""
-Python client to retrieve data provided by DWD via their geoserver WFS API
-"""
+"""Python client to retrieve data provided by DWD via their WFS API."""
 
-from .weatherwarnings import DwdWeatherWarningsAPI
+from .weatherwarnings import DwdWeatherWarningsAPI  # noqa: F401

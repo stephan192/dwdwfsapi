@@ -1,8 +1,6 @@
 # -*- coding: utf-8 -*-
 
-"""
-Python client to retrieve weather warnings from Deutscher Wetterdienst (DWD)
-"""
+"""Python client to retrieve weather warnings from DWD."""
 
 # pylint: disable=c-extension-no-member
 import datetime
@@ -11,10 +9,7 @@ from .core import query_dwd
 
 
 def convert_warning_data(data_in):
-    """
-    Convert the data received from DWD
-    """
-
+    """Convert the data received from DWD."""
     # pylint: disable=too-many-branches
     # pylint: disable=too-many-statements
 
@@ -46,19 +41,19 @@ def convert_warning_data(data_in):
     if "onset" in data_in:
         try:
             data_out["start_time"] = ciso8601.parse_datetime(data_in["onset"])
-        except:  # pylint: disable=bare-except
+        except:  # pylint: disable=bare-except # noqa: E722
             data_out["start_time"] = None
     if "expires" in data_in:
         try:
             data_out["end_time"] = ciso8601.parse_datetime(data_in["expires"])
-        except:  # pylint: disable=bare-except
+        except:  # pylint: disable=bare-except # noqa: E722
             data_out["end_time"] = None
     if "event" in data_in:
         data_out["event"] = data_in["event"]
     if "ec_ii" in data_in:
         try:
             data_out["event_code"] = int(data_in["ec_ii"])
-        except:  # pylint: disable=bare-except
+        except:  # pylint: disable=bare-except # noqa: E722
             data_out["event_code"] = 0
     if "headline" in data_in:
         data_out["headline"] = data_in["headline"]
@@ -72,10 +67,11 @@ def convert_warning_data(data_in):
                 data_out["level"] = weather_severity_mapping[
                     data_in["severity"].lower()
                 ]
-        except:  # pylint: disable=bare-except
+        except:  # pylint: disable=bare-except # noqa: E722
             data_out["level"] = 0
     if "parametername" in data_in and "parametervalue" in data_in:
-        # Depending on the query the keys and values are either seperated by , or ;
+        # Depending on the query the keys and values are either seperated
+        # by , or ;
         try:
             if "," in data_in["parametername"]:
                 keys = data_in["parametername"].split(",")
@@ -84,14 +80,14 @@ def convert_warning_data(data_in):
                 keys = data_in["parametername"].split(";")
                 values = data_in["parametervalue"].split(";")
             data_out["parameters"] = dict(zip(keys, values))
-        except:  # pylint: disable=bare-except
+        except:  # pylint: disable=bare-except # noqa: E722
             data_out["parameters"] = None
     if "ec_area_color" in data_in:
         try:
             colors = data_in["ec_area_color"].split(" ")
             data_out["color"] = f"#{int(colors[0]):02x}{int(colors[1]):02x}"
             data_out["color"] += f"{int(colors[2]):02x}"
-        except:  # pylint: disable=bare-except
+        except:  # pylint: disable=bare-except # noqa: E722
             data_out["color"] = "#000000"
 
     return data_out
@@ -99,7 +95,7 @@ def convert_warning_data(data_in):
 
 class DwdWeatherWarningsAPI:
     """
-    Class for retrieving weather warnings from DWD
+    Class for retrieving weather warnings from DWD.
 
     Attributes:
     -----------
@@ -148,7 +144,7 @@ class DwdWeatherWarningsAPI:
 
     def __init__(self, identifier):
         """
-        Init DWD weather warnings
+        Init DWD weather warnings.
 
         Parameters
         ----------
@@ -170,20 +166,19 @@ class DwdWeatherWarningsAPI:
         self.expected_warning_level = None
         self.expected_warnings = None
 
-        self.__generate_query(identifier)
+        # Identifier must be either integer or string
+        if not isinstance(identifier, (int, str)):
+            return
 
+        self.__generate_query(identifier)
         self.update()
 
     def __bool__(self):
-        """
-        Returns the data_valid attribute
-        """
+        """Return the data_valid attribute."""
         return self.data_valid
 
     def __len__(self):
-        """
-        Returns the sum of current and expected warnings
-        """
+        """Return the sum of current and expected warnings."""
         if self.data_valid:
             length = len(self.current_warnings) + len(self.expected_warnings)
         else:
@@ -191,9 +186,7 @@ class DwdWeatherWarningsAPI:
         return length
 
     def __str__(self):
-        """
-        Returns a short overview about the actual status
-        """
+        """Return a short overview about the actual status."""
         if self.data_valid:
             retval = f"{len(self.current_warnings)} current and"
             retval += f" {len(self.expected_warnings)} expected warnings"
@@ -203,9 +196,7 @@ class DwdWeatherWarningsAPI:
         return retval
 
     def update(self):
-        """
-        Update data by querying DWD server and parsing result
-        """
+        """Update data by querying DWD server and parsing result."""
         if self.__query is None:
             return
 
@@ -222,9 +213,7 @@ class DwdWeatherWarningsAPI:
             self.expected_warnings = None
 
     def __generate_query(self, identifier):
-        """
-        Determine the warning region to which the identifier belongs
-        """
+        """Determine the warning region to which the identifier belongs."""
         weather_warnings_query_mapping = {
             "dwd:Warngebiete_Gemeinden": "dwd:Warnungen_Gemeinden",
             "dwd:Warngebiete_Kreise": "dwd:Warnungen_Landkreise",
@@ -251,7 +240,8 @@ class DwdWeatherWarningsAPI:
                     self.warncell_name = result["features"][0]["properties"][
                         "NAME"
                     ]
-                    # More than one match found. Can only happen if search is done by name.
+                    # More than one match found. Can only happen if search is
+                    # done by name.
                     if result["numberReturned"] > 1:
                         self.warncell_name += " (not unique used ID)!"
 
@@ -270,9 +260,7 @@ class DwdWeatherWarningsAPI:
                     break
 
     def __parse_result(self, json_obj):
-        """
-        Parse the retrieved data
-        """
+        """Parse the retrieved data."""
         try:
             current_maxlevel = 0
             expected_maxlevel = 0
@@ -284,7 +272,7 @@ class DwdWeatherWarningsAPI:
                     self.last_update = ciso8601.parse_datetime(
                         json_obj["timeStamp"]
                     )
-                except:  # pylint: disable=bare-except
+                except:  # pylint: disable=bare-except # noqa: E722
                     self.last_update = datetime.datetime.now(
                         datetime.timezone.utc
                     )
@@ -325,7 +313,7 @@ class DwdWeatherWarningsAPI:
             self.expected_warnings = expected_warnings
             self.data_valid = True
 
-        except:  # pylint: disable=bare-except
+        except:  # pylint: disable=bare-except # noqa: E722
             self.data_valid = False
             self.last_update = None
             self.current_warning_level = None

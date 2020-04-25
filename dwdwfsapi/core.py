@@ -1,10 +1,12 @@
 # -*- coding: utf-8 -*-
 
 """
-Collection of the core functions needed to communicate with the geoserver
-operated by the Deutscher Wetterdienst (DWD)
 
+Collection of the core functions needed to communicate with the geoserver.
+
+The geoserver is operated by the Deutscher Wetterdienst (DWD).
 https://maps.dwd.de
+
 """
 
 import urllib.parse
@@ -16,9 +18,7 @@ DEFAULT_WFS_OUTPUTFORMAT = "application/json"
 
 
 def query_dwd(**kwargs):
-    """
-    Retrive data from DWD server.
-    """
+    """Retrive data from DWD server."""
     # Make all keys lowercase and escape all values
     kwargs = {k.lower(): urllib.parse.quote(v) for k, v in kwargs.items()}
 
@@ -50,5 +50,5 @@ def query_dwd(**kwargs):
         if resp.status_code != 200:
             return None
         return resp.json()
-    except: # pylint: disable=bare-except
+    except:  # pylint: disable=bare-except # noqa: E722
         return None
