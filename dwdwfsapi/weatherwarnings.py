@@ -61,6 +61,8 @@ def convert_warning_data(data_in):
         data_out["description"] = data_in["description"]
     if "instruction" in data_in:
         data_out["instruction"] = data_in["instruction"]
+    if "urgency" in data_in:
+        data_out["urgency"] = data_in["urgency"]
     if "severity" in data_in:
         try:
             if data_in["severity"].lower() in weather_severity_mapping:
@@ -292,8 +294,7 @@ class DwdWeatherWarningsAPI:
                         continue
 
                     if (
-                        warning["start_time"] is not None
-                        and warning["start_time"] < current_time
+                        warning["urgency"] == "Immediate"
                     ):
                         current_warnings.append(warning)
                         current_maxlevel = max(
