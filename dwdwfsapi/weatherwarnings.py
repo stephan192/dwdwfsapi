@@ -32,6 +32,7 @@ def convert_warning_data(data_in):
         "headline": None,
         "description": None,
         "instruction": None,
+        "urgency": "immediate",
         "level": 0,
         "parameters": None,
         "color": "#000000",
@@ -62,7 +63,10 @@ def convert_warning_data(data_in):
     if "instruction" in data_in:
         data_out["instruction"] = data_in["instruction"]
     if "urgency" in data_in:
-        data_out["urgency"] = data_in["urgency"]
+        if data_in["urgency"].lower() == "future":
+            data_out["urgency"] = "future"
+        else:
+            data_out["urgency"] = "immediate"
     if "severity" in data_in:
         try:
             if data_in["severity"].lower() in weather_severity_mapping:
@@ -128,6 +132,8 @@ class DwdWeatherWarningsAPI:
             a details warning description
         instruction : str
             instructions and safety notices
+        urgency: str
+            warning urgency (either "immediate" or "future")
         level : int
             warning level (0 - 4)
         parameters : dict
@@ -285,17 +291,7 @@ class DwdWeatherWarningsAPI:
                 for feature in json_obj["features"]:
                     warning = convert_warning_data(feature["properties"])
 
-                    current_time = datetime.datetime.now(datetime.timezone.utc)
-                    # pylint: disable=bad-continuation
-                    if (
-                        warning["end_time"] is not None
-                        and current_time > warning["end_time"]
-                    ):
-                        continue
-
-                    if (
-                        warning["urgency"] == "Immediate"
-                    ):
+                    if warning["urgency"] == "immediate":
                         current_warnings.append(warning)
                         current_maxlevel = max(
                             warning["level"], current_maxlevel
@@ -305,7 +301,6 @@ class DwdWeatherWarningsAPI:
                         expected_maxlevel = max(
                             warning["level"], expected_maxlevel
                         )
-                    # pylint: enable=bad-continuation
 
             self.current_warning_level = current_maxlevel
             self.current_warnings = current_warnings

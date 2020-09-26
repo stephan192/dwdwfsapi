@@ -2,7 +2,7 @@
 Python client to retrieve data provided by DWD via their geoserver WFS API
 
 The DWD (Deutscher Wetterdienst) publishes various weather information for Germany.
-The data is published via their [Geoserver](https://maps.dwd.de). For a more information have a look [here](https://www.dwd.de/DE/leistungen/geowebservice/geowebservice.html) and [here](https://maps.dwd.de/geoserver/wfs?SERVICE=WFS&VERSION=2.0.0&REQUEST=GetCapabilities).
+The data is published via their [Geoserver](https://maps.dwd.de). For a more information have a look [here](https://www.dwd.de/DE/leistungen/geodienste/geodienste.html) and [here](https://maps.dwd.de/geoserver/wfs?SERVICE=WFS&VERSION=2.0.0&REQUEST=GetCapabilities).
 
 ## Install
 ```
@@ -100,7 +100,7 @@ Last update: 2020-04-18 17:57:29.274000+00:00
   Range: 0 (=no warning) to 4 (=extreme weather)
 
 - **`current_warnings : list of dicts`**  
-  Dictionary containing all currently active warnings  
+  Dictionary containing all currently active warnings ("Wetterwarnungen", urgency="immediate")
   
   See section warning dictionary for more details
 
@@ -110,7 +110,7 @@ Last update: 2020-04-18 17:57:29.274000+00:00
   Range: 0 (=no warning) to 4 (=extreme weather)
 
 - **`expected_warnings : list of dicts`**  
-  Dictionary containung all expected warnings
+  Dictionary containing all expected warnings ("Vorabinformationen", urgency="future")
   
   See section warning dictionary for more details
     expected_warnings : dict
@@ -127,6 +127,8 @@ Last update: 2020-04-18 17:57:29.274000+00:00
 
 - **`event_code: int`**  
   Integer representation of the warning event
+  
+  For more details have a look [here](https://www.dwd.de/DE/leistungen/opendata/help/warnungen/gesamtueberblickII.pdf?__blob=publicationFile&v=3)
 
 - **`headline : str`**  
   The official warning headline
@@ -137,6 +139,9 @@ Last update: 2020-04-18 17:57:29.274000+00:00
 - **`instruction : str`**  
   Instructions and safety notices
 
+- **`urgency : str`**  
+  Warning urgency (either "immediate" or "future")
+
 - **`level : int`**  
   Warning level  
   
@@ -145,7 +150,7 @@ Last update: 2020-04-18 17:57:29.274000+00:00
 - **`parameters : dict`**  
   Dictionary containing warning specific parameters  
   
-  For more details have a look [here](https://www.dwd.de/DE/leistungen/gds/help/warnungen/cap_dwd_profile_en_pdf.pdf)
+  For more details have a look [here](https://www.dwd.de/DE/leistungen/opendata/help/warnungen/cap_dwd_profile_de_pdf_1_11.pdf?__blob=publicationFile&v=3)
 
 - **`color : str`**  
   Warning color formatted #rrggbb
