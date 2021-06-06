@@ -1,3 +1,7 @@
+## 1.0.4 (2021-06-06)
+### Changed
+- Warncell ID handling due to changes in DWD api
+
 ## 1.0.3 (2020-09-26)
 ### Added
 - Urgency attribute added to warning dictionary
