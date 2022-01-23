@@ -230,30 +230,42 @@ class DwdWeatherWarningsAPI:
             "dwd:Warngebiete_Kueste": "dwd:Warnungen_Kueste",
         }
 
-        identifier = str(identifier)
         region_query = {}
+        # Numbers represent warncell ids
+        if isinstance(identifier, int) or identifier.isnumeric():
+            region_query["CQL_FILTER"] = f"WARNCELLID='{identifier}'"
+        else:
+            region_query["CQL_FILTER"] = f"NAME='{identifier}'"
 
-        found_cnt = 0
         for region in weather_warnings_query_mapping:
             region_query["typeName"] = region
             result = query_dwd(**region_query)
             if result is not None:
-                for res in result["features"]:
-                    if (identifier in res["id"]) or (
-                        identifier == res["properties"]["NAME"]
-                    ):
-                        cell_id = res["id"][res["id"].rfind(".") + 1 :]
-                        if cell_id.isnumeric():
-                            self.warncell_id = int(cell_id)
-                            self.warncell_name = res["properties"]["NAME"]
-                            self.__query = {
-                                "typeName": weather_warnings_query_mapping[
-                                    region
-                                ]
-                            }
-                            found_cnt += 1
-        if found_cnt > 1:
-            self.warncell_name += " (not unique used ID)!"
+                if result["numberReturned"] > 0:
+                    self.warncell_id = result["features"][0]["properties"][
+                        "WARNCELLID"
+                    ]
+                    self.warncell_name = result["features"][0]["properties"][
+                        "NAME"
+                    ]
+                    # More than one match found. Can only happen if search is
+                    # done by name.
+                    if result["numberReturned"] > 1:
+                        self.warncell_name += " (not unique used ID)!"
+
+                    self.__query = {
+                        "typeName": weather_warnings_query_mapping[region]
+                    }
+                    # Special handling for counties
+                    if region == "dwd:Warngebiete_Kreise":
+                        self.__query[
+                            "CQL_FILTER"
+                        ] = f"GC_WARNCELLID='{self.warncell_id}'"
+                    else:
+                        self.__query[
+                            "CQL_FILTER"
+                        ] = f"WARNCELLID='{self.warncell_id}'"
+                    break
 
     def __parse_result(self, json_obj):
         """Parse the retrieved data."""
@@ -277,19 +289,18 @@ class DwdWeatherWarningsAPI:
 
             if json_obj["numberReturned"]:
                 for feature in json_obj["features"]:
-                    if str(self.warncell_id) in feature["id"]:
-                        warning = convert_warning_data(feature["properties"])
+                    warning = convert_warning_data(feature["properties"])
 
-                        if warning["urgency"] == "immediate":
-                            current_warnings.append(warning)
-                            current_maxlevel = max(
-                                warning["level"], current_maxlevel
-                            )
-                        else:
-                            expected_warnings.append(warning)
-                            expected_maxlevel = max(
-                                warning["level"], expected_maxlevel
-                            )
+                    if warning["urgency"] == "immediate":
+                        current_warnings.append(warning)
+                        current_maxlevel = max(
+                            warning["level"], current_maxlevel
+                        )
+                    else:
+                        expected_warnings.append(warning)
+                        expected_maxlevel = max(
+                            warning["level"], expected_maxlevel
+                        )
 
             self.current_warning_level = current_maxlevel
             self.current_warnings = current_warnings

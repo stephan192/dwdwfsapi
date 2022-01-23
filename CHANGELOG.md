@@ -1,3 +1,7 @@
+## 1.0.5 (2022-01-23)
+### Changed
+- Revert changes done in 1.0.4
+
 ## 1.0.4 (2021-06-06)
 ### Changed
 - Warncell ID handling due to changes in DWD api
