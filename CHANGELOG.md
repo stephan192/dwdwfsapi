@@ -1,3 +1,7 @@
+## 1.0.6 (2022-09-30)
+### Changed
+- Add option to use a GPS location for the object creation that's used to retrieve the warncell ID
+
 ## 1.0.5 (2022-01-23)
 ### Changed
 - Revert changes done in 1.0.4
