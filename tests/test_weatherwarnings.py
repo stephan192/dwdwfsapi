@@ -8,6 +8,8 @@ MIN_WARNING_LEVEL = 0  # 0 = no warning
 MAX_WARNING_LEVEL = 4  # 4 = extreme weather
 TIME_TOLERANCE = 5  # seconds
 
+GPS_LOCATION = (47.89523367441655, 10.06151536620045)
+
 WARNCELL_ID_CITY = 808436003
 WARNCELL_NAME_CITY = "Gemeinde Aichstetten"
 WARNCELL_ID_COUNTY = 106439000
@@ -94,6 +96,23 @@ def test_sea():
     assert dwd.data_valid
     assert dwd.warncell_id == WARNCELL_ID_SEA
     assert dwd.warncell_name == WARNCELL_NAME_SEA
+    start_time = datetime.datetime.now(
+        datetime.timezone.utc
+    ) - datetime.timedelta(0, TIME_TOLERANCE)
+    stop_time = start_time + datetime.timedelta(0, (2 * TIME_TOLERANCE))
+    assert start_time < dwd.last_update < stop_time
+    assert MIN_WARNING_LEVEL <= dwd.current_warning_level <= MAX_WARNING_LEVEL
+    assert MIN_WARNING_LEVEL <= dwd.expected_warning_level <= MAX_WARNING_LEVEL
+    assert isinstance(dwd.current_warnings, list)
+    assert isinstance(dwd.expected_warnings, list)
+
+
+def test_gps_location():
+    """Test determining the warncell id through gps."""
+    dwd = DwdWeatherWarningsAPI(GPS_LOCATION)
+    assert dwd.data_valid
+    assert dwd.warncell_id == WARNCELL_ID_CITY
+    assert dwd.warncell_name == WARNCELL_NAME_CITY
     start_time = datetime.datetime.now(
         datetime.timezone.utc
     ) - datetime.timedelta(0, TIME_TOLERANCE)

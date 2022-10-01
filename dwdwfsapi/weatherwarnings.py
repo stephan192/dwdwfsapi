@@ -156,8 +156,8 @@ class DwdWeatherWarningsAPI:
 
         Parameters
         ----------
-        identifier : str or int
-            a valid warncell id or name
+        identifier : str, int or tuple
+            a valid warncell id, name or location (latitude, longitude)
             https://www.dwd.de/DE/leistungen/opendata/help/warnungen/
                     cap_warncellids_csv.html
             NOTE: Some of the warncells are outdated but still listed.
@@ -175,7 +175,10 @@ class DwdWeatherWarningsAPI:
         self.expected_warnings = None
 
         # Identifier must be either integer or string
-        if not isinstance(identifier, (int, str)):
+        if not isinstance(identifier, (int, str, tuple)):
+            return
+        # Tuple version must consist of 2 values (latitude and longitude)
+        elif isinstance(identifier, tuple) and len(identifier) != 2:
             return
 
         self.__generate_query(identifier)
@@ -232,10 +235,14 @@ class DwdWeatherWarningsAPI:
 
         region_query = {}
         # Numbers represent warncell ids
-        if isinstance(identifier, int) or identifier.isnumeric():
+        if isinstance(identifier, int) or (isinstance(identifier, str) and identifier.isnumeric()):
             region_query["CQL_FILTER"] = f"WARNCELLID='{identifier}'"
-        else:
+        # Strings represent warncell names
+        elif isinstance(identifier, str):
             region_query["CQL_FILTER"] = f"NAME='{identifier}'"
+        # Tuples represent gps locations (latitude, longitude)
+        elif isinstance(identifier, tuple):
+            region_query["CQL_FILTER"] = f"CONTAINS(SHAPE, Point({identifier[0]} {identifier[1]}))"
 
         for region in weather_warnings_query_mapping:
             region_query["typeName"] = region
