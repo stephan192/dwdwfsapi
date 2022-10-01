@@ -51,7 +51,8 @@ Last update: 2020-04-18 17:57:29.274000+00:00
     'start_time': datetime.datetime(2020, 4, 18, 23, 0, tzinfo=datetime.timezone.utc),
     'end_time': datetime.datetime(2020, 4, 19, 5, 0, tzinfo=datetime.timezone.utc),
     'event': 'FROST',
-    'event_code': 22, 'headline': 'Amtliche WARNUNG vor FROST',
+    'event_code': 22,
+    'headline': 'Amtliche WARNUNG vor FROST',
     'description': 'Es tritt leichter Frost um 0 °C auf. In Bodennähe wird leichter Frost bis -4 °C erwartet.',
     'instruction': None, 'level': 1,
     'parameters':

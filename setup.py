@@ -15,7 +15,7 @@ URL = "https://github.com/stephan192/dwdwfsapi"
 EMAIL = "stephan192@outlook.com"
 AUTHOR = "stephan192"
 REQUIRES_PYTHON = ">=3.6"
-VERSION = "1.0.5"
+VERSION = "1.0.6"
 
 # Define required packages
 REQUIRES = ["requests>=2.23.0,<3", "ciso8601>=2.1.3,<3", "urllib3>=1.25.8,<2"]
