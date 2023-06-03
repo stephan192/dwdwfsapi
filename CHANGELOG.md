@@ -1,3 +1,7 @@
+## 1.0.7 (2023-06-03)
+### Changed
+- Update urllib3 requirement
+
 ## 1.0.6 (2022-09-30)
 ### Changed
 - Add option to use a GPS location for the object creation that's used to retrieve the warncell ID
