@@ -18,7 +18,7 @@ REQUIRES_PYTHON = ">=3.6"
 VERSION = "1.0.6"
 
 # Define required packages
-REQUIRES = ["requests>=2.23.0,<3", "ciso8601>=2.1.3,<3", "urllib3>=1.25.8,<2"]
+REQUIRES = ["requests>=2.23.0,<3", "ciso8601>=2.1.3,<3", "urllib3>=1.25.8,<3"]
 
 # Import README.md and CHANGELOG.md
 with open("README.md", "r") as fh:
