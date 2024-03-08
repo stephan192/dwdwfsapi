@@ -75,8 +75,7 @@ Last update: 2020-04-18 17:57:29.274000+00:00
   `gps location` consists of the latitude and longitude in this order. Keeping this order for the tuple is important for
   the query to work correctly.  
 
-  A list auf valid warncell ids and names can be found [here](https://www.dwd.de/DE/leistungen/opendata/help/warnungen/cap_warncellids_csv.html). 
-  Some of the warncells are outdated but still listed. If init fails search the list for a similar sounding warncell.  
+  A list of valid warncell ids and names can be found in [warncells.md](https://github.com/stephan192/dwdwfsapi/blob/master/docs/warncells.md).  
 
   Method `update()` is automatically called at the end of a successfull init.  
 
@@ -133,8 +132,6 @@ Last update: 2020-04-18 17:57:29.274000+00:00
 
 - **`event_code: int`**  
   Integer representation of the warning event
-  
-  For more details have a look [here](https://www.dwd.de/DE/leistungen/opendata/help/warnungen/gesamtueberblickII.pdf?__blob=publicationFile&v=3)
 
 - **`headline : str`**  
   The official warning headline
@@ -155,8 +152,6 @@ Last update: 2020-04-18 17:57:29.274000+00:00
 
 - **`parameters : dict`**  
   Dictionary containing warning specific parameters  
-  
-  For more details have a look [here](https://www.dwd.de/DE/leistungen/opendata/help/warnungen/cap_dwd_profile_de_pdf_1_11.pdf?__blob=publicationFile&v=3)
 
 - **`color : str`**  
   Warning color formatted #rrggbb

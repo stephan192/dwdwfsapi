@@ -31,6 +31,7 @@ Issues = "https://github.com/stephan192/dwdwfsapi/issues"
 [tool.hatch.build]
 exclude = [
     "/.github",
+    "/docs",
     "/tests",
 ]
 
