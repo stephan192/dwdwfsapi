@@ -1,0 +1,50 @@
+name: Bug Report
+description: File a bug report
+labels: ["bug"]
+projects: ["stephan192/dwdwfsapi"]
+assignees: ["stephan192"]
+body:
+  - type: input
+    id: api_version
+    attributes:
+      label: DWD WFS API version
+      description: Which version of the DWD WFS API are you using?
+      placeholder: ex. 1.0.7
+    validations:
+      required: true
+  - type: input
+    id: affected_warncell_id
+    attributes:
+      label: Affected warncell ID
+      description: Which warncell ID is affected by this issue?
+      placeholder: ex. 101001000
+    validations:
+      required: true
+  - type: textarea
+    id: what_happened
+    attributes:
+      label: What happened
+      description: In addition please tell, what did you expect to happen?
+      placeholder: Tell what you see!
+    validations:
+      required: true
+  - type: textarea
+    id: repro
+    attributes:
+      label: Reproduction steps
+      description: How do you trigger this bug? Please explain it step by step.
+      placeholder: |
+        1.
+        2.
+        3.
+        ...
+    validations:
+      required: true
+  - type: textarea
+    id: logs
+    attributes:
+      label: Relevant log output
+      description: Please copy and paste any relevant log output. This will be automatically formatted into code, so no need for backticks.
+      render: shell
+    validations:
+      required: false
