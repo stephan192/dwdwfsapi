@@ -227,7 +227,6 @@ class DwdWeatherWarningsAPI:
         weather_warnings_query_mapping = {
             "dwd:Warngebiete_Gemeinden": "dwd:Warnungen_Gemeinden",
             "dwd:Warngebiete_Kreise": "dwd:Warnungen_Landkreise",
-            "dwd:Warngebiete_See": "dwd:Warnungen_See",
             "dwd:Warngebiete_Binnenseen": "dwd:Warnungen_Binnenseen",
             "dwd:Warngebiete_Kueste": "dwd:Warnungen_Kueste",
         }
