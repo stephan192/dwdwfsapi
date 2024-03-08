@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 """
 
 Collection of the core functions needed to communicate with the geoserver.
@@ -10,15 +8,18 @@ https://maps.dwd.de
 """
 
 import urllib.parse
+
 import requests
 
 DEFAULT_WFS_VERSION = "2.0.0"
 DEFAULT_WFS_REQUEST = "GetFeature"
 DEFAULT_WFS_OUTPUTFORMAT = "application/json"
+DEFAULT_TIMEOUT = 10.0
 
 
 def query_dwd(**kwargs):
     """Retrive data from DWD server."""
+    # pylint: disable=too-many-branches
     # Make all keys lowercase and escape all values
     kwargs = {k.lower(): urllib.parse.quote(v) for k, v in kwargs.items()}
 
@@ -43,12 +44,16 @@ def query_dwd(**kwargs):
         query += f"&OutputFormat={kwargs['outputformat']}"
     else:
         query += f"&OutputFormat={DEFAULT_WFS_OUTPUTFORMAT}"
+    if "timeout" in kwargs:
+        timeout = kwargs["timeout"]
+    else:
+        timeout = DEFAULT_TIMEOUT
 
     # Finally query the dwd geoserver
     try:
-        resp = requests.get(query)
+        resp = requests.get(query, timeout=timeout)
         if resp.status_code != 200:
             return None
         return resp.json()
-    except:  # pylint: disable=bare-except # noqa: E722
+    except:  # pylint: disable=bare-except
         return None

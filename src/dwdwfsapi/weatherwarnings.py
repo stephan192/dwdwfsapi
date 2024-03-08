@@ -1,10 +1,9 @@
-# -*- coding: utf-8 -*-
-
 """Python client to retrieve weather warnings from DWD."""
 
-# pylint: disable=c-extension-no-member
 import datetime
+
 import ciso8601
+
 from .core import query_dwd
 
 
@@ -42,19 +41,19 @@ def convert_warning_data(data_in):
     if "onset" in data_in:
         try:
             data_out["start_time"] = ciso8601.parse_datetime(data_in["onset"])
-        except:  # pylint: disable=bare-except # noqa: E722
+        except:  # pylint: disable=bare-except
             data_out["start_time"] = None
     if "expires" in data_in:
         try:
             data_out["end_time"] = ciso8601.parse_datetime(data_in["expires"])
-        except:  # pylint: disable=bare-except # noqa: E722
+        except:  # pylint: disable=bare-except
             data_out["end_time"] = None
     if "event" in data_in:
         data_out["event"] = data_in["event"]
     if "ec_ii" in data_in:
         try:
             data_out["event_code"] = int(data_in["ec_ii"])
-        except:  # pylint: disable=bare-except # noqa: E722
+        except:  # pylint: disable=bare-except
             data_out["event_code"] = 0
     if "headline" in data_in:
         data_out["headline"] = data_in["headline"]
@@ -73,7 +72,7 @@ def convert_warning_data(data_in):
                 data_out["level"] = weather_severity_mapping[
                     data_in["severity"].lower()
                 ]
-        except:  # pylint: disable=bare-except # noqa: E722
+        except:  # pylint: disable=bare-except
             data_out["level"] = 0
     if "parametername" in data_in and "parametervalue" in data_in:
         # Depending on the query the keys and values are either seperated
@@ -86,14 +85,14 @@ def convert_warning_data(data_in):
                 keys = data_in["parametername"].split(";")
                 values = data_in["parametervalue"].split(";")
             data_out["parameters"] = dict(zip(keys, values))
-        except:  # pylint: disable=bare-except # noqa: E722
+        except:  # pylint: disable=bare-except
             data_out["parameters"] = None
     if "ec_area_color" in data_in:
         try:
             colors = data_in["ec_area_color"].split(" ")
             data_out["color"] = f"#{int(colors[0]):02x}{int(colors[1]):02x}"
             data_out["color"] += f"{int(colors[2]):02x}"
-        except:  # pylint: disable=bare-except # noqa: E722
+        except:  # pylint: disable=bare-except
             data_out["color"] = "#000000"
 
     return data_out
@@ -178,7 +177,7 @@ class DwdWeatherWarningsAPI:
         if not isinstance(identifier, (int, str, tuple)):
             return
         # Tuple version must consist of 2 values (latitude and longitude)
-        elif isinstance(identifier, tuple) and len(identifier) != 2:
+        if isinstance(identifier, tuple) and len(identifier) != 2:
             return
 
         self.__generate_query(identifier)
@@ -235,43 +234,39 @@ class DwdWeatherWarningsAPI:
 
         region_query = {}
         # Numbers represent warncell ids
-        if isinstance(identifier, int) or (isinstance(identifier, str) and identifier.isnumeric()):
+        if isinstance(identifier, int) or (
+            isinstance(identifier, str) and identifier.isnumeric()
+        ):
             region_query["CQL_FILTER"] = f"WARNCELLID='{identifier}'"
         # Strings represent warncell names
         elif isinstance(identifier, str):
             region_query["CQL_FILTER"] = f"NAME='{identifier}'"
         # Tuples represent gps locations (latitude, longitude)
         elif isinstance(identifier, tuple):
-            region_query["CQL_FILTER"] = f"CONTAINS(SHAPE, Point({identifier[0]} {identifier[1]}))"
+            region_query["CQL_FILTER"] = (
+                f"CONTAINS(SHAPE, Point({identifier[0]} {identifier[1]}))"
+            )
 
-        for region in weather_warnings_query_mapping:
+        for region, mapping in weather_warnings_query_mapping.items():
             region_query["typeName"] = region
             result = query_dwd(**region_query)
             if result is not None:
                 if result["numberReturned"] > 0:
-                    self.warncell_id = result["features"][0]["properties"][
-                        "WARNCELLID"
-                    ]
-                    self.warncell_name = result["features"][0]["properties"][
-                        "NAME"
-                    ]
+                    self.warncell_id = result["features"][0]["properties"]["WARNCELLID"]
+                    self.warncell_name = result["features"][0]["properties"]["NAME"]
                     # More than one match found. Can only happen if search is
                     # done by name.
                     if result["numberReturned"] > 1:
                         self.warncell_name += " (not unique used ID)!"
 
-                    self.__query = {
-                        "typeName": weather_warnings_query_mapping[region]
-                    }
+                    self.__query = {"typeName": mapping}
                     # Special handling for counties
                     if region == "dwd:Warngebiete_Kreise":
-                        self.__query[
-                            "CQL_FILTER"
-                        ] = f"GC_WARNCELLID='{self.warncell_id}'"
+                        self.__query["CQL_FILTER"] = (
+                            f"GC_WARNCELLID='{self.warncell_id}'"
+                        )
                     else:
-                        self.__query[
-                            "CQL_FILTER"
-                        ] = f"WARNCELLID='{self.warncell_id}'"
+                        self.__query["CQL_FILTER"] = f"WARNCELLID='{self.warncell_id}'"
                     break
 
     def __parse_result(self, json_obj):
@@ -284,13 +279,9 @@ class DwdWeatherWarningsAPI:
 
             if json_obj["timeStamp"]:
                 try:
-                    self.last_update = ciso8601.parse_datetime(
-                        json_obj["timeStamp"]
-                    )
-                except:  # pylint: disable=bare-except # noqa: E722
-                    self.last_update = datetime.datetime.now(
-                        datetime.timezone.utc
-                    )
+                    self.last_update = ciso8601.parse_datetime(json_obj["timeStamp"])
+                except:  # pylint: disable=bare-except
+                    self.last_update = datetime.datetime.now(datetime.timezone.utc)
             else:
                 self.last_update = datetime.datetime.now(datetime.timezone.utc)
 
@@ -300,14 +291,10 @@ class DwdWeatherWarningsAPI:
 
                     if warning["urgency"] == "immediate":
                         current_warnings.append(warning)
-                        current_maxlevel = max(
-                            warning["level"], current_maxlevel
-                        )
+                        current_maxlevel = max(warning["level"], current_maxlevel)
                     else:
                         expected_warnings.append(warning)
-                        expected_maxlevel = max(
-                            warning["level"], expected_maxlevel
-                        )
+                        expected_maxlevel = max(warning["level"], expected_maxlevel)
 
             self.current_warning_level = current_maxlevel
             self.current_warnings = current_warnings
@@ -316,7 +303,7 @@ class DwdWeatherWarningsAPI:
             self.expected_warnings = expected_warnings
             self.data_valid = True
 
-        except:  # pylint: disable=bare-except # noqa: E722
+        except:  # pylint: disable=bare-except
             self.data_valid = False
             self.last_update = None
             self.current_warning_level = None
