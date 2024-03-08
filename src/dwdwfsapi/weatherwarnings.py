@@ -1,8 +1,6 @@
 """Python client to retrieve weather warnings from DWD."""
 
-import datetime
-
-import ciso8601
+from datetime import UTC, datetime
 
 from .core import query_dwd
 
@@ -40,12 +38,12 @@ def convert_warning_data(data_in):
     # Convert data
     if "onset" in data_in:
         try:
-            data_out["start_time"] = ciso8601.parse_datetime(data_in["onset"])
+            data_out["start_time"] = datetime.fromisoformat(data_in["onset"])
         except:  # pylint: disable=bare-except
             data_out["start_time"] = None
     if "expires" in data_in:
         try:
-            data_out["end_time"] = ciso8601.parse_datetime(data_in["expires"])
+            data_out["end_time"] = datetime.fromisoformat(data_in["expires"])
         except:  # pylint: disable=bare-except
             data_out["end_time"] = None
     if "event" in data_in:
@@ -278,11 +276,11 @@ class DwdWeatherWarningsAPI:
 
             if json_obj["timeStamp"]:
                 try:
-                    self.last_update = ciso8601.parse_datetime(json_obj["timeStamp"])
+                    self.last_update = datetime.fromisoformat(json_obj["timeStamp"])
                 except:  # pylint: disable=bare-except
-                    self.last_update = datetime.datetime.now(datetime.timezone.utc)
+                    self.last_update = datetime.now(UTC)
             else:
-                self.last_update = datetime.datetime.now(datetime.timezone.utc)
+                self.last_update = datetime.now(UTC)
 
             if json_obj["numberReturned"]:
                 for feature in json_obj["features"]:

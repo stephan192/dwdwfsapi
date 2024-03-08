@@ -4,13 +4,13 @@ build-backend = "hatchling.build"
 
 [project]
 name = "dwdwfsapi"
-version = "1.0.7"
+version = "1.0.8"
 authors = [
     { name="stephan192", email="stephan192@outlook.com" },
 ]
 description = "Python client to retrieve data provided by DWD via their geoserver WFS API"
 readme = "README.md"
-requires-python = ">=3.6"
+requires-python = ">=3.11"
 keywords = ["dwd", "ows", "wfs", "deutscher wetterdienst"]
 classifiers = [
     "Development Status :: 5 - Production/Stable",
@@ -19,9 +19,8 @@ classifiers = [
     "Operating System :: OS Independent",
 ]
 dependencies = [
-    "ciso8601>=2.1.3,<3",
-    "requests>=2.23.0,<3",
-    "urllib3>=1.25.8,<3",
+    "requests>=2.31.0",
+    "urllib3>=1.26.5",
 ]
 
 [project.urls]

@@ -1,3 +1,11 @@
+## 1.0.8 (2024-03-08)
+### Changed
+- Update minimum required Python version to 3.11
+- Remove usage of ciso8601
+- Update minimum required versions for requests and urllib3
+- Remove query for unavailable layer dwd:Warnungen_See
+- Add timeout to request.get()
+
 ## 1.0.7 (2023-06-03)
 ### Changed
 - Update urllib3 requirement
