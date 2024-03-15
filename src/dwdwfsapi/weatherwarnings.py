@@ -155,11 +155,8 @@ class DwdWeatherWarningsAPI:
         ----------
         identifier : str, int or tuple
             a valid warncell id, name or location (latitude, longitude)
-            https://www.dwd.de/DE/leistungen/opendata/help/warnungen/
-                    cap_warncellids_csv.html
-            NOTE: Some of the warncells are outdated but still listed.
-                  If init fails search the list for a similar sounding
-                  warncell.
+            https://github.com/stephan192/dwdwfsapi/blob/master/docs/
+            warncells.md
         """
         self.data_valid = False
         self.warncell_id = None
@@ -254,7 +251,7 @@ class DwdWeatherWarningsAPI:
                     # More than one match found. Can only happen if search is
                     # done by name.
                     if result["numberReturned"] > 1:
-                        self.warncell_name += " (not unique used ID)!"
+                        self.warncell_name += " (not unique use ID!)"
 
                     self.__query = {"typeName": mapping}
                     # Special handling for counties

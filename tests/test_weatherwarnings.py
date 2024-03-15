@@ -1,6 +1,6 @@
 """Tests for dwdwfsapi weatherwarnings module."""
 
-import datetime
+from datetime import UTC, datetime, timedelta
 
 import pytest
 
@@ -34,16 +34,14 @@ testdata_invalid = [12345678, "Hintertupfing", (0.0, 0.0)]
 
 @pytest.mark.parametrize("ident, name", testdata_ident)
 def test_id(ident, name):
-    """Test a given warncell id ."""
+    """Test a given warncell id."""
     dwd = DwdWeatherWarningsAPI(ident)
 
     assert dwd.data_valid
     assert dwd.warncell_id == ident
     assert dwd.warncell_name == name
-    start_time = datetime.datetime.now(datetime.timezone.utc) - datetime.timedelta(
-        0, TIME_TOLERANCE
-    )
-    stop_time = start_time + datetime.timedelta(0, (2 * TIME_TOLERANCE))
+    start_time = datetime.now(UTC) - timedelta(0, TIME_TOLERANCE)
+    stop_time = start_time + timedelta(0, (2 * TIME_TOLERANCE))
     assert start_time < dwd.last_update < stop_time
     assert MIN_WARNING_LEVEL <= dwd.current_warning_level <= MAX_WARNING_LEVEL
     assert MIN_WARNING_LEVEL <= dwd.expected_warning_level <= MAX_WARNING_LEVEL
@@ -53,16 +51,14 @@ def test_id(ident, name):
 
 @pytest.mark.parametrize("name, ident", testdata_name)
 def test_name(name, ident):
-    """Test a given warncell id ."""
+    """Test a given warncell name."""
     dwd = DwdWeatherWarningsAPI(ident)
 
     assert dwd.data_valid
     assert dwd.warncell_id == ident
     assert dwd.warncell_name == name
-    start_time = datetime.datetime.now(datetime.timezone.utc) - datetime.timedelta(
-        0, TIME_TOLERANCE
-    )
-    stop_time = start_time + datetime.timedelta(0, (2 * TIME_TOLERANCE))
+    start_time = datetime.now(UTC) - timedelta(0, TIME_TOLERANCE)
+    stop_time = start_time + timedelta(0, (2 * TIME_TOLERANCE))
     assert start_time < dwd.last_update < stop_time
     assert MIN_WARNING_LEVEL <= dwd.current_warning_level <= MAX_WARNING_LEVEL
     assert MIN_WARNING_LEVEL <= dwd.expected_warning_level <= MAX_WARNING_LEVEL
@@ -72,16 +68,14 @@ def test_name(name, ident):
 
 @pytest.mark.parametrize("location, ident, name", testdata_gps)
 def test_gps_location(location, ident, name):
-    """Test determining the warncell id through gps."""
+    """Test determining the warncell through gps."""
     dwd = DwdWeatherWarningsAPI(location)
 
     assert dwd.data_valid
     assert dwd.warncell_id == ident
     assert dwd.warncell_name == name
-    start_time = datetime.datetime.now(datetime.timezone.utc) - datetime.timedelta(
-        0, TIME_TOLERANCE
-    )
-    stop_time = start_time + datetime.timedelta(0, (2 * TIME_TOLERANCE))
+    start_time = datetime.now(UTC) - timedelta(0, TIME_TOLERANCE)
+    stop_time = start_time + timedelta(0, (2 * TIME_TOLERANCE))
     assert start_time < dwd.last_update < stop_time
     assert MIN_WARNING_LEVEL <= dwd.current_warning_level <= MAX_WARNING_LEVEL
     assert MIN_WARNING_LEVEL <= dwd.expected_warning_level <= MAX_WARNING_LEVEL

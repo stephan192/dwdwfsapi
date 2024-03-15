@@ -10,7 +10,7 @@ pip install dwdwfsapi
 ```
 
 ## Usage
-The WFS API currently consists only of one module for retrieving the current weather warnings.
+The WFS API currently consists only of two modules. One for retrieving the current weather warnings and one for retreiving the bio weather forecast.
 
 ### Weather warnings module
 
@@ -94,10 +94,10 @@ Last update: 2020-04-18 17:57:29.274000+00:00
 - **`warncell_name : str`**  
   The name of the selected warncell  
   
-  If the name is not unique `" (not unique used ID)!"` will be added to the name
+  If the name is not unique `" (not unique use ID!)"` will be added to the name
 
 - **`last_update : datetime`**  
-  The UTC timestamp of the last update
+  Timestamp of the last update
 
 - **`current_warning_level : int`**  
   Highest currently active warning level  
@@ -118,14 +118,13 @@ Last update: 2020-04-18 17:57:29.274000+00:00
   Dictionary containing all expected warnings ("Vorabinformationen", urgency="future")
   
   See section warning dictionary for more details
-    expected_warnings : dict
 
 **Warning dictionary**
 - **`start_time : datetime`**  
-  UTC timestamp when the warning starts
+  Timestamp when the warning starts
 
 - **`end_time : datetime`**  
-  UTC timestamp when the warning ends
+  Timestamp when the warning ends
 
 - **`event: str`**  
   String representation of the warning event
@@ -155,3 +154,126 @@ Last update: 2020-04-18 17:57:29.274000+00:00
 
 - **`color : str`**  
   Warning color formatted #rrggbb
+
+### Bio weather module
+
+#### Quickstart example
+Python code
+```
+from dwdwfsapi import DwdBioWeatherAPI
+bio = DwdBioWeatherAPI(8)
+
+if bio.data_valid:
+    for k, v in bio.forecast_data.items():
+        print(f"{k} - {v['name']}")
+        for entry in v["forecast"]:
+            print(f"\t{entry['start_time']} : {entry['color']} - {entry['level']} = {entry['impact']}")
+```
+
+Result
+```
+1 - allgemeine Befindensbeeinträchtigungen
+        2024-03-15 00:00:00+00:00 : #ffff00 - 2 = geringe Gefährdung
+        2024-03-15 12:00:00+00:00 : #37ba29 - 1 = kein Einfluss
+        2024-03-16 00:00:00+00:00 : #ffff00 - 2 = geringe Gefährdung
+        2024-03-16 12:00:00+00:00 : #006eff - 0 = positiver Einfluss
+        2024-03-17 00:00:00+00:00 : #ffff00 - 2 = geringe Gefährdung
+        2024-03-17 12:00:00+00:00 : #ffff00 - 2 = geringe Gefährdung
+2 - Asthma
+        2024-03-15 00:00:00+00:00 : #ffff00 - 2 = geringe Gefährdung
+        2024-03-15 12:00:00+00:00 : #37ba29 - 1 = kein Einfluss
+        2024-03-16 00:00:00+00:00 : #ffff00 - 2 = geringe Gefährdung
+        2024-03-16 12:00:00+00:00 : #37ba29 - 1 = kein Einfluss
+        2024-03-17 00:00:00+00:00 : #ffff00 - 2 = geringe Gefährdung
+        2024-03-17 12:00:00+00:00 : #37ba29 - 1 = kein Einfluss
+3 - Herz- und Kreislaufgeschehen (hypotone Form)
+        2024-03-15 00:00:00+00:00 : #ffff00 - 2 = geringe Gefährdung
+        2024-03-15 12:00:00+00:00 : #37ba29 - 1 = kein Einfluss
+        2024-03-16 00:00:00+00:00 : #ffff00 - 2 = geringe Gefährdung
+        2024-03-16 12:00:00+00:00 : #37ba29 - 1 = kein Einfluss
+        2024-03-17 00:00:00+00:00 : #ffff00 - 2 = geringe Gefährdung
+        2024-03-17 12:00:00+00:00 : #ffff00 - 2 = geringe Gefährdung
+4 - Herz- und Kreislaufgeschehen (hypertone Form)
+        2024-03-15 00:00:00+00:00 : #ffff00 - 2 = geringe Gefährdung
+        2024-03-15 12:00:00+00:00 : #37ba29 - 1 = kein Einfluss
+        2024-03-16 00:00:00+00:00 : #ffff00 - 2 = geringe Gefährdung
+        2024-03-16 12:00:00+00:00 : #ffff00 - 2 = geringe Gefährdung
+        2024-03-17 00:00:00+00:00 : #ffff00 - 2 = geringe Gefährdung
+        2024-03-17 12:00:00+00:00 : #37ba29 - 1 = kein Einfluss
+5 - rheumatische Beschwerden (degenerativ)
+        2024-03-15 00:00:00+00:00 : #ffff00 - 2 = geringe Gefährdung
+        2024-03-15 12:00:00+00:00 : #37ba29 - 1 = kein Einfluss
+        2024-03-16 00:00:00+00:00 : #ffff00 - 2 = geringe Gefährdung
+        2024-03-16 12:00:00+00:00 : #ffff00 - 2 = geringe Gefährdung
+        2024-03-17 00:00:00+00:00 : #ffff00 - 2 = geringe Gefährdung
+        2024-03-17 12:00:00+00:00 : #37ba29 - 1 = kein Einfluss
+6 - rheumatische Beschwerden (entzündlich)
+        2024-03-15 00:00:00+00:00 : #ffff00 - 2 = geringe Gefährdung
+        2024-03-15 12:00:00+00:00 : #37ba29 - 1 = kein Einfluss
+        2024-03-16 00:00:00+00:00 : #ffff00 - 2 = geringe Gefährdung
+        2024-03-16 12:00:00+00:00 : #37ba29 - 1 = kein Einfluss
+        2024-03-17 00:00:00+00:00 : #ffff00 - 2 = geringe Gefährdung
+        2024-03-17 12:00:00+00:00 : #ffff00 - 2 = geringe Gefährdung
+```
+
+#### Detailed description
+**Methods:**
+- **`__init__(identifier)`**  
+  Create a new bio weather API class instance  
+  
+  The `identifier` can either be a so called `cell id` (int) or a `cell name` (str). 
+  It is heavily advised to use `cell id` over `cell name` because the name is not unique in some cases.
+
+  A list of valid warncell ids and names can be found in [warncells.md](https://github.com/stephan192/dwdwfsapi/blob/master/docs/biocells.md).  
+
+  Method `update()` is automatically called at the end of a successfull init.  
+
+- **`update()`**  
+  Update data by querying DWD server and parsing result  
+  
+  Function should be called regularly, e.g. every 15minutes, to update the data stored in the class attributes.
+
+**Attributes (read only):**
+- **`data_valid : bool`**  
+  A flag wether or not the other attributes contain valid values
+
+- **`cell_id : int`**  
+  The id of the selected cell
+
+- **`cell_name : str`**  
+  The name of the selected ncell  
+  
+  If the name is not unique `" (not unique use ID!)"` will be added to the name
+
+- **`last_update : datetime`**  
+  Timestamp of the last update
+
+- **`forecast_data : dict`**  
+  Dictionary containing all forecast data
+  
+  See section forecast data dictionary for more details
+
+**Forecast data dictionary**
+- **`key : int`**  
+  Data type
+
+- **`name : str`**  
+  String representation of the data type
+
+- **`forecast : list of dicts`**  
+  List containing the forecast data
+  
+  See section forecast dictionary for more details
+
+**Forecast dictionary**
+- **`start_time : datetime`**  
+  Timestamp when the forecast starts
+
+- **`level : int`**  
+  Impact level (0 - 3)
+
+- **`impact : str`**  
+  String representation of the impact level
+
+- **`color : str`**  
+  Forecast color formatted #rrggbb

@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "dwdwfsapi"
-version = "1.0.8"
+version = "1.1.0"
 authors = [
     { name="stephan192", email="stephan192@outlook.com" },
 ]
@@ -39,6 +39,9 @@ profile = "black"
 
 [tool.pylint.main]
 recursive = true
+
+[tool.pylint.'MESSAGES CONTROL']
+disable = 'duplicate-code'
 
 [tool.pytest.ini_options]
 pythonpath = "src"
