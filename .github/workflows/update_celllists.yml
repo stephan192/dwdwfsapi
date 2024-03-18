@@ -1,4 +1,4 @@
-name: Update warncells.md
+name: Update cell lists
 
 on:
   workflow_dispatch:
@@ -22,15 +22,18 @@ jobs:
           python -m pip install --upgrade pip
           pip install .
 
-      - name: Execute Python Script
-        run: python update_warncell_list.py
+      - name: Execute Python Scripts
+        run: |
+          python update_biocell_list.py
+          python update_pollencell_list.py
+          python update_warncell_list.py
         working-directory: ./docs
 
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v6
         with:
-          commit-message: Update warncells.md
-          title: Update warncells.md
-          body: Update warncells.md to reflect changes by DWD
-          branch: update-warncellsmd
+          commit-message: Update cell lists
+          title: Update cell lists
+          body: Update cell lists to reflect changes by DWD
+          branch: update-celllists
           delete-branch: true
