@@ -1,3 +1,8 @@
+## 1.1.0 (2024-03-18)
+### Added
+- DwdBioWeatherAPI
+- DwdPollenFlightAPI
+
 ## 1.0.8 (2024-03-08)
 ### Changed
 - Update minimum required Python version to 3.11
