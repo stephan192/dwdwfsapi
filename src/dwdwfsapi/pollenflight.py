@@ -43,10 +43,10 @@ class DwdPollenFlightAPI:
             data type
         name : str
             string representation of the data type
-        forecast : list
+        forecast : list of dicts
             list containing the forecast data
             start_time : datetime
-                timestamp when the warning starts
+                timestamp when the forecast starts
             level : int
                 impact level (0 - 6)
             impact : str

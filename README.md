@@ -161,10 +161,10 @@ Last update: 2020-04-18 17:57:29.274000+00:00
 Python code
 ```
 from dwdwfsapi import DwdBioWeatherAPI
-bio = DwdBioWeatherAPI(8)
+dwd = DwdBioWeatherAPI(8)
 
-if bio.data_valid:
-    for k, v in bio.forecast_data.items():
+if dwd.data_valid:
+    for k, v in dwd.forecast_data.items():
         print(f"{k} - {v['name']}")
         for entry in v["forecast"]:
             print(f"\t{entry['start_time']} : {entry['color']} - {entry['level']} = {entry['impact']}")
@@ -224,14 +224,14 @@ Result
   The `identifier` can either be a so called `cell id` (int) or a `cell name` (str). 
   It is heavily advised to use `cell id` over `cell name` because the name is not unique in some cases.
 
-  A list of valid warncell ids and names can be found in [warncells.md](https://github.com/stephan192/dwdwfsapi/blob/master/docs/biocells.md).  
+  A list of valid cell ids and names can be found in [biocells.md](https://github.com/stephan192/dwdwfsapi/blob/master/docs/biocells.md).  
 
   Method `update()` is automatically called at the end of a successfull init.  
 
 - **`update()`**  
   Update data by querying DWD server and parsing result  
   
-  Function should be called regularly, e.g. every 15minutes, to update the data stored in the class attributes.
+  Function should be called regularly, e.g. every 12hours, to update the data stored in the class attributes.
 
 **Attributes (read only):**
 - **`data_valid : bool`**  
@@ -337,14 +337,14 @@ Result
   The `identifier` can either be a so called `cell id` (int) or a `cell name` (str). 
   It is heavily advised to use `cell id` over `cell name` because the name is not unique in some cases.
 
-  A list of valid warncell ids and names can be found in [warncells.md](https://github.com/stephan192/dwdwfsapi/blob/master/docs/pollencells.md).  
+  A list of valid cell ids and names can be found in [pollencells.md](https://github.com/stephan192/dwdwfsapi/blob/master/docs/pollencells.md).  
 
   Method `update()` is automatically called at the end of a successfull init.  
 
 - **`update()`**  
   Update data by querying DWD server and parsing result  
   
-  Function should be called regularly, e.g. every 15minutes, to update the data stored in the class attributes.
+  Function should be called regularly, e.g. every 12hours, to update the data stored in the class attributes.
 
 **Attributes (read only):**
 - **`data_valid : bool`**  
