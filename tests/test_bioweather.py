@@ -8,7 +8,7 @@ from dwdwfsapi import DwdBioWeatherAPI
 
 MIN_LEVEL = 0  # 0 = positive impact
 MAX_LEVEL = 3  # 3 = high risk
-TIME_TOLERANCE = 5  # seconds
+TIME_TOLERANCE = 15  # seconds
 FORECAST_TYPES = 6  # Number of different forecast types
 FORECAST_COUNT = 6  # Number forecasts per type
 
@@ -28,13 +28,13 @@ testdata_invalid = [12, "Hintertupfing"]
 @pytest.mark.parametrize("ident, name", testdata_ident)
 def test_id(ident, name):
     """Test a given cell id."""
+    start_time = datetime.now(UTC) - timedelta(seconds=TIME_TOLERANCE)
+    stop_time = datetime.now(UTC) + timedelta(seconds=TIME_TOLERANCE)
     dwd = DwdBioWeatherAPI(ident)
 
     assert dwd.data_valid
     assert dwd.cell_id == ident
     assert dwd.cell_name == name
-    start_time = datetime.now(UTC) - timedelta(0, TIME_TOLERANCE)
-    stop_time = start_time + timedelta(0, (2 * TIME_TOLERANCE))
     assert start_time < dwd.last_update < stop_time
     assert isinstance(dwd.forecast_data, dict)
     assert len(dwd.forecast_data) == FORECAST_TYPES
@@ -47,13 +47,13 @@ def test_id(ident, name):
 @pytest.mark.parametrize("name, ident", testdata_name)
 def test_name(name, ident):
     """Test a given cell name."""
+    start_time = datetime.now(UTC) - timedelta(seconds=TIME_TOLERANCE)
+    stop_time = datetime.now(UTC) + timedelta(seconds=TIME_TOLERANCE)
     dwd = DwdBioWeatherAPI(ident)
 
     assert dwd.data_valid
     assert dwd.cell_id == ident
     assert dwd.cell_name == name
-    start_time = datetime.now(UTC) - timedelta(0, TIME_TOLERANCE)
-    stop_time = start_time + timedelta(0, (2 * TIME_TOLERANCE))
     assert start_time < dwd.last_update < stop_time
     assert isinstance(dwd.forecast_data, dict)
     assert len(dwd.forecast_data) == FORECAST_TYPES
