@@ -13,7 +13,6 @@ def fetch_json() -> dict:
         + "dwd:Pollenfluggebiete"
         + "&OutputFormat=application/json"
     )
-    print(url)
     response = requests.get(url=url, timeout=10.0)
     return response.json()
 
