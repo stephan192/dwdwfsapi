@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+import json
+
 import requests
 
 
@@ -42,5 +44,13 @@ with open("pollencells.md", "w", encoding="utf-8") as f:
     for cell in all_stations:
         output = "| " + str(cell[0]) + " | " + cell[1] + " |"
         print(output, file=f)
+    f.close()
 
+all_stations_dict = {}
+for cell in all_stations:
+    all_stations_dict[cell[0]] = cell[1]
+
+print("Updating pollencells.json")
+with open("pollencells.json", "w", encoding="utf-8") as f:
+    json.dump(all_stations_dict, f, indent=4, ensure_ascii=False)
     f.close()

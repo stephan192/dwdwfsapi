@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import json
 import urllib.parse
 
 import requests
@@ -50,5 +51,13 @@ with open("warncells.md", "w", encoding="utf-8") as f:
     for warncell in all_stations:
         output = "| " + warncell[0] + " | " + warncell[1] + " | " + warncell[2] + " |"
         print(output, file=f)
+    f.close()
 
+all_stations_dict = {}
+for warncell in all_stations:
+    all_stations_dict[warncell[0]] = warncell[2]
+
+print("Updating warncells.json")
+with open("warncells.json", "w", encoding="utf-8") as f:
+    json.dump(all_stations_dict, f, indent=4, ensure_ascii=False)
     f.close()
