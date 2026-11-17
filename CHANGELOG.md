@@ -1,6 +1,7 @@
-## 1.1.1 (2026-11-17)
+## 1.2.0 (2026-11-17)
 ### Added
 - Add ability to automatically recover in case of unavailable DWD servers during init
+- Add functions get_all_bioweather_cells, get_all_pollenflight_cells and get_all_weatherwarning_cells to retrieve dictionaries containing all available cells
 
 ## 1.1.0 (2024-03-18)
 ### Added

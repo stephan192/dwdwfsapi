@@ -8,6 +8,7 @@ https://maps.dwd.de
 """
 
 import urllib.parse
+from typing import Any
 
 import requests
 
@@ -15,6 +16,17 @@ DEFAULT_WFS_VERSION = "2.0.0"
 DEFAULT_WFS_REQUEST = "GetFeature"
 DEFAULT_WFS_OUTPUTFORMAT = "application/json"
 DEFAULT_TIMEOUT = 10.0
+
+
+def fetch_json(url: str, timeout: float = 10.0) -> Any:
+    """Fetch data via json."""
+    try:
+        resp = requests.get(url=url, timeout=timeout)
+        if resp.status_code != 200:
+            return None
+        return resp.json()
+    except:  # pylint: disable=bare-except
+        return None
 
 
 def query_dwd(**kwargs):
@@ -50,10 +62,4 @@ def query_dwd(**kwargs):
         timeout = DEFAULT_TIMEOUT
 
     # Finally query the dwd geoserver
-    try:
-        resp = requests.get(query, timeout=timeout)
-        if resp.status_code != 200:
-            return None
-        return resp.json()
-    except:  # pylint: disable=bare-except
-        return None
+    return fetch_json(url=query, timeout=timeout)

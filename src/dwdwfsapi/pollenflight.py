@@ -2,7 +2,15 @@
 
 from datetime import UTC, datetime
 
-from .core import query_dwd
+from .core import fetch_json, query_dwd
+
+
+def get_all_pollenflight_cells() -> dict[str, str]:
+    """Return all available pollen flight cells."""
+    return fetch_json(
+        "https://raw.githubusercontent.com/stephan192/dwdwfsapi/refs/heads/master/docs/"
+        + "pollencells.json"
+    )
 
 
 def convert_forecast_data(data_in):

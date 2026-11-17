@@ -2,7 +2,15 @@
 
 from datetime import UTC, datetime
 
-from .core import query_dwd
+from .core import fetch_json, query_dwd
+
+
+def get_all_bioweather_cells() -> dict[str, str]:
+    """Return all available bio weather cells."""
+    return fetch_json(
+        "https://raw.githubusercontent.com/stephan192/dwdwfsapi/refs/heads/master/docs/"
+        + "biocells.json"
+    )
 
 
 def convert_forecast_data(data_in):
