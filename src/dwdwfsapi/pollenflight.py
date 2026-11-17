@@ -69,6 +69,7 @@ class DwdPollenFlightAPI:
         self.data_valid = False
         self.cell_id = None
         self.cell_name = None
+        self.__identifier = None
         self.__query = None
         self.last_update = None
         self.forecast_data = None
@@ -77,7 +78,7 @@ class DwdPollenFlightAPI:
         if not isinstance(identifier, (int, str)):
             return
 
-        self.__generate_query(identifier)
+        self.__identifier = identifier
         self.update()
 
     def __bool__(self):
@@ -108,7 +109,9 @@ class DwdPollenFlightAPI:
     def update(self):
         """Update data by querying DWD server and parsing result."""
         if self.__query is None:
-            return
+            self.__generate_query()
+            if self.__query is None:
+                return
 
         json_data = query_dwd(**self.__query)
 
@@ -119,14 +122,17 @@ class DwdPollenFlightAPI:
             self.last_update = None
             self.forecast_data = None
 
-    def __generate_query(self, identifier):
+    def __generate_query(self):
         """Determine the id to which the identifier belongs."""
+        if self.__identifier is None:
+            return
+
         region_query = {}
         # Numbers represent cell ids
-        if isinstance(identifier, int) or identifier.isnumeric():
-            region_query["CQL_FILTER"] = f"GF='{identifier}'"
+        if isinstance(self.__identifier, int) or self.__identifier.isnumeric():
+            region_query["CQL_FILTER"] = f"GF='{self.__identifier}'"
         else:
-            region_query["CQL_FILTER"] = f"GEN LIKE '%{identifier}%'"
+            region_query["CQL_FILTER"] = f"GEN LIKE '%{self.__identifier}%'"
 
         region_query["typeName"] = "dwd:Pollenfluggebiete"
         result = query_dwd(**region_query)

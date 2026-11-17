@@ -1,3 +1,7 @@
+## 1.1.1 (2026-11-17)
+### Added
+- Add ability to automatically recover in case of unavailable DWD servers during init
+
 ## 1.1.0 (2024-03-18)
 ### Added
 - DwdBioWeatherAPI
