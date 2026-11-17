@@ -2,7 +2,15 @@
 
 from datetime import UTC, datetime
 
-from .core import query_dwd
+from .core import fetch_json, query_dwd
+
+
+def get_all_bioweather_cells() -> dict[str, str]:
+    """Return all available bio weather cells."""
+    return fetch_json(
+        "https://raw.githubusercontent.com/stephan192/dwdwfsapi/refs/heads/master/docs/"
+        + "biocells.json"
+    )
 
 
 def convert_forecast_data(data_in):
@@ -69,6 +77,7 @@ class DwdBioWeatherAPI:
         self.data_valid = False
         self.cell_id = None
         self.cell_name = None
+        self.__identifier = None
         self.__query = None
         self.last_update = None
         self.forecast_data = None
@@ -77,7 +86,7 @@ class DwdBioWeatherAPI:
         if not isinstance(identifier, (int, str)):
             return
 
-        self.__generate_query(identifier)
+        self.__identifier = identifier
         self.update()
 
     def __bool__(self):
@@ -108,7 +117,9 @@ class DwdBioWeatherAPI:
     def update(self):
         """Update data by querying DWD server and parsing result."""
         if self.__query is None:
-            return
+            self.__generate_query()
+            if self.__query is None:
+                return
 
         json_data = query_dwd(**self.__query)
 
@@ -119,14 +130,17 @@ class DwdBioWeatherAPI:
             self.last_update = None
             self.forecast_data = None
 
-    def __generate_query(self, identifier):
+    def __generate_query(self):
         """Determine the id to which the identifier belongs."""
+        if self.__identifier is None:
+            return
+
         region_query = {}
         # Numbers represent cell ids
-        if isinstance(identifier, int) or identifier.isnumeric():
-            region_query["CQL_FILTER"] = f"GF='{identifier}'"
+        if isinstance(self.__identifier, int) or self.__identifier.isnumeric():
+            region_query["CQL_FILTER"] = f"GF='{self.__identifier}'"
         else:
-            region_query["CQL_FILTER"] = f"GEN LIKE '%{identifier}%'"
+            region_query["CQL_FILTER"] = f"GEN LIKE '%{self.__identifier}%'"
 
         region_query["typeName"] = "dwd:Biowettergebiete"
         result = query_dwd(**region_query)

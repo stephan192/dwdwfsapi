@@ -2,7 +2,15 @@
 
 from datetime import UTC, datetime
 
-from .core import query_dwd
+from .core import fetch_json, query_dwd
+
+
+def get_all_weatherwarning_cells() -> dict[str, str]:
+    """Return all available weather warning cells."""
+    return fetch_json(
+        "https://raw.githubusercontent.com/stephan192/dwdwfsapi/refs/heads/master/docs/"
+        + "warncells.json"
+    )
 
 
 def convert_warning_data(data_in):
@@ -161,6 +169,7 @@ class DwdWeatherWarningsAPI:
         self.data_valid = False
         self.warncell_id = None
         self.warncell_name = None
+        self.__identifier = None
         self.__query = None
         self.last_update = None
         self.current_warning_level = None
@@ -175,7 +184,7 @@ class DwdWeatherWarningsAPI:
         if isinstance(identifier, tuple) and len(identifier) != 2:
             return
 
-        self.__generate_query(identifier)
+        self.__identifier = identifier
         self.update()
 
     def __bool__(self):
@@ -203,7 +212,9 @@ class DwdWeatherWarningsAPI:
     def update(self):
         """Update data by querying DWD server and parsing result."""
         if self.__query is None:
-            return
+            self.__generate_query()
+            if self.__query is None:
+                return
 
         json_data = query_dwd(**self.__query)
 
@@ -217,8 +228,11 @@ class DwdWeatherWarningsAPI:
             self.expected_warning_level = None
             self.expected_warnings = None
 
-    def __generate_query(self, identifier):
+    def __generate_query(self):
         """Determine the warning region to which the identifier belongs."""
+        if self.__identifier is None:
+            return
+
         weather_warnings_query_mapping = {
             "dwd:Warngebiete_Gemeinden": "dwd:Warnungen_Gemeinden",
             "dwd:Warngebiete_Kreise": "dwd:Warnungen_Landkreise",
@@ -228,17 +242,17 @@ class DwdWeatherWarningsAPI:
 
         region_query = {}
         # Numbers represent warncell ids
-        if isinstance(identifier, int) or (
-            isinstance(identifier, str) and identifier.isnumeric()
+        if isinstance(self.__identifier, int) or (
+            isinstance(self.__identifier, str) and self.__identifier.isnumeric()
         ):
-            region_query["CQL_FILTER"] = f"WARNCELLID='{identifier}'"
+            region_query["CQL_FILTER"] = f"WARNCELLID='{self.__identifier}'"
         # Strings represent warncell names
-        elif isinstance(identifier, str):
-            region_query["CQL_FILTER"] = f"NAME='{identifier}'"
+        elif isinstance(self.__identifier, str):
+            region_query["CQL_FILTER"] = f"NAME='{self.__identifier}'"
         # Tuples represent gps locations (latitude, longitude)
-        elif isinstance(identifier, tuple):
+        elif isinstance(self.__identifier, tuple):
             region_query["CQL_FILTER"] = (
-                f"CONTAINS(SHAPE, Point({identifier[0]} {identifier[1]}))"
+                f"CONTAINS(SHAPE, Point({self.__identifier[0]} {self.__identifier[1]}))"
             )
 
         for region, mapping in weather_warnings_query_mapping.items():
